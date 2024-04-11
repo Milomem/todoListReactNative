@@ -103,5 +103,12 @@ export const styles = StyleSheet.create({
     viewText:{
         justifyContent: 'center',
         alignItems: 'center',
-    }
+    },
+    containerTask: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: 370,
+        marginHorizontal: 24,
+    },
+
 })

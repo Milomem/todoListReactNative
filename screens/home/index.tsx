@@ -1,13 +1,37 @@
-import { View, Image, TextInput, TouchableOpacity, Text } from "react-native";
+import { View, Image, TextInput, TouchableOpacity, Text, Alert, FlatList } from "react-native";
 import { styles } from "./styles";
 import { useState } from "react";
 import { TodoList } from "../components";
 
 export function Home() {
-    const [participants, setParticipants] = useState<string[]>([])
+    const [task, setTask] = useState<string[]>([])
     const [newTask, setNewTask] = useState<string>("");
     const [isFocused, setIsFocused] = useState<boolean>(false)
     
+    function handleAddTask() {
+        if (task.includes(newTask)) {
+            return Alert.alert("Task ja existe", "Já existe uma task na lista com esse nome.");
+          }
+
+        if(newTask === "") return;
+
+        setTask(prevState => [...prevState, newTask])
+        setNewTask("")
+    }
+
+      function handleTaskRemove(taskRemove: string) {
+        Alert.alert("Remover", `Remover a task ?`, [
+          {
+            text: 'Sim',
+            onPress: () => setTask(prevState => prevState.filter(task => task !== taskRemove))
+          },
+          {
+            text: 'Não',
+            style: 'cancel'
+          }
+        ])
+      }
+
     return(
         <View style={styles.rootContainer}>
             <View style={styles.container}>
@@ -25,7 +49,7 @@ export function Home() {
                     onBlur={() => setIsFocused(false)}
                 />
 
-                <TouchableOpacity style={styles.buttonAdd}>
+                <TouchableOpacity style={styles.buttonAdd} onPress={handleAddTask}>
                     <Text style={styles.textButtonAdd}>
                         +
                     </Text>
@@ -39,7 +63,7 @@ export function Home() {
                     </Text>
                     <View style={styles.numberView} >
                         <Text style={styles.number}>
-                            0
+                            {task.length}
                         </Text>
                     </View>
                 </View>
@@ -56,20 +80,34 @@ export function Home() {
                 </View>
             </View>
 
-            <View style={styles.containerClipboard}>
-                <Image style={styles.image} source={require("../../assets/Clipboard.png")} />
-                <View style={styles.viewText}>
-                    <Text style={styles.textClipboardBold}>
-                        Você ainda não tem tarefas cadastradas
-                    </Text>
+            <View style={styles.containerTask}>
+                <FlatList
+                data={task}
+                keyExtractor={(item) => item}
+                renderItem={({ item }) => (
+                    <TodoList
+                    key={item} 
+                    task={item} 
+                    onRemove={() => handleTaskRemove(item)}/>
+                )}
+                showsVerticalScrollIndicator={false}
+                showsHorizontalScrollIndicator={false}
+                ListEmptyComponent={()=> (
+                    <View style={styles.containerClipboard}>
+                        <Image style={styles.image} source={require("../../assets/Clipboard.png")} />
+                        <View style={styles.viewText}>
+                            <Text style={styles.textClipboardBold}>
+                                Você ainda não tem tarefas cadastradas
+                            </Text>
 
-                    <Text style={styles.textClipboard}>
-                        Crie tarefas e organize seus itens a fazer
-                    </Text>
-                </View>
-                <TodoList/>
+                            <Text style={styles.textClipboard}>
+                                Crie tarefas e organize seus itens a fazer
+                            </Text>
+                        </View>
+                    </View> 
+                )}
+                />
             </View>
-
         </View>
     )
-}
+} 
