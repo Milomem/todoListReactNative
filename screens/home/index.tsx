@@ -7,6 +7,15 @@ export function Home() {
     const [task, setTask] = useState<string[]>([])
     const [newTask, setNewTask] = useState<string>("");
     const [isFocused, setIsFocused] = useState<boolean>(false)
+    const [count, setCount] = useState<number>(0);
+
+    function handleIncrement() {
+        setCount(prevCount => prevCount + 1);
+    }
+
+    function handleDecrement() {
+        setCount(prevCount => prevCount - 1);
+    }
     
     function handleAddTask() {
         if (task.includes(newTask)) {
@@ -74,7 +83,7 @@ export function Home() {
                     </Text>
                     <View style={styles.numberView} >
                         <Text style={styles.number}>
-                            0
+                            {count}
                         </Text>
                     </View>
                 </View>
@@ -88,7 +97,10 @@ export function Home() {
                     <TodoList
                     key={item} 
                     task={item} 
-                    onRemove={() => handleTaskRemove(item)}/>
+                    onRemove={() => handleTaskRemove(item)}
+                    increment={() => handleIncrement()}
+                    decrement={() => handleDecrement()}
+                    />
                 )}
                 showsVerticalScrollIndicator={false}
                 showsHorizontalScrollIndicator={false}
